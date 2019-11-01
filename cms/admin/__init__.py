@@ -13,6 +13,7 @@ def requested_type(type):
 
 @admin_bp.route('/', defaults={'type': 'page'})
 @admin_bp.route('/<type>')
+@auth.protected
 def content(type):
     if requested_type(type):
         content = Content.query.join(Type).filter(Type.name == type)
@@ -21,6 +22,7 @@ def content(type):
         abort(404)
 
 @admin_bp.route('/create/<type>', methods=('GET', 'POST'))
+@auth.protected
 def create(type):
     if requested_type(type):
         if request.method == 'POST':
@@ -76,11 +78,13 @@ def edit(id):
     return render_template('admin/content_form.html', types=types, title='Edit', item_title=content.title, slug=content.slug, type_name=type.name, type_id=content.type_id, body=content.body)
 
 @admin_bp.route('/users')
+@auth.protected
 def users():
     users = User.query.all()
     return render_template('admin/users.html', title='Users', users=users)
 
 @admin_bp.route('/settings')
+@auth.protected
 def settings():
     settings = Setting.query.all()
     return render_template('admin/settings.html', title='Settings', settings=settings)
