@@ -5,7 +5,7 @@ from datetime import datetime
 
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin', template_folder='templates')
 
-
+from cms.admin import auth
 
 def requested_type(type):
     types = [row.name for row in Type.query.all()]
@@ -49,6 +49,7 @@ def create(type):
         abort(404)
 
 @admin_bp.route('/edit/<id>', methods=('GET', 'POST'))
+@auth.protected
 def edit(id):
     content = Content.query.get_or_404(id)
     type = Type.query.get(content.type_id)
